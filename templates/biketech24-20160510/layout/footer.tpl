@@ -211,6 +211,7 @@
 			});
         </script>
     {/if} {if !empty($Einstellungen.global.global_google_analytics_id)}
+        {* UA-24435892-1 *}
         <script type="text/javascript">
 			function gaOptout() {
 				document.cookie = disableStr + '=true; expires=Thu, 31 Dec 2099 23:59:59 UTC; path=/';
@@ -236,6 +237,7 @@
 					s.parentNode.insertBefore(ga, s);
 				{rdelim})();
 			}
+			
         </script>
     {/if}
 	<script>
