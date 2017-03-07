@@ -1,6 +1,19 @@
 {if !isset($bAjaxRequest) || !$bAjaxRequest}
     {include file='layout/header.tpl'}
 {/if}
+
+{* add u-charged *}
+{if !isset($oNavigationsinfo) || isset($Suchergebnisse) && isset($oNavigationsinfo) && empty($oNavigationsinfo->cName)}
+    <script type="text/javascript">
+        dataLayer.push({
+            'event': 'rem',
+            'ecomm_itemid': [{foreach name=artikel from=$Suchergebnisse->Artikel->elemente item=Artikel}'{$Artikel->kArtikel}'{if not $smarty.foreach.artikel.last},{/if}{/foreach}],
+            'ecomm_pagetype': 'searchresults'
+        });
+    </script>
+{/if}
+{* ------------- *}
+
 <div id="result-wrapper">
     {include file='productlist/header.tpl'}
     {assign var="style" value="gallery"}

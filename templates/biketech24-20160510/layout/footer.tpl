@@ -212,19 +212,6 @@
         </script>
     {/if}
 
-    {* add u-charged *}
-    <script type="text/javascript">
-//        dataLayer.push({
-//            'event': 'rem',
-//            'ecomm_itemid': 'REPLACE_WITH_VALUE',
-//            'ecomm_pagetype': 'REPLACE_WITH_VALUE',
-//            'ecomm_category': 'REPLACE_WITH_VALUE',
-//            'ecomm_totalvalue': 'REPLACE_WITH_VALUE'
-//        });
-    </script>
-
-    {* ------------- *}
-
     {if !empty($Einstellungen.global.global_google_analytics_id)}
         {* UA-24435892-1 *}
         <script type="text/javascript">

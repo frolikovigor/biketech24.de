@@ -1,3 +1,15 @@
+{* add u-charged *}
+<script type="text/javascript">
+    dataLayer.push({
+        'event': 'rem',
+        'ecomm_itemid': '{$Artikel->Preise->kArtikel}',
+        'ecomm_pagetype': 'product',
+        'ecomm_category': '{$Xselling->Similars->getCategoryOfArticle}',
+        'ecomm_totalvalue': '{$Artikel->Preise->fVKBrutto}'
+    });
+</script>
+{* ------------- *}
+
 {if isset($boxes)}{* only available in shop versions > 3.19 *}
     {has_boxes position='left' assign='hasLeftBox'}
 {/if}
@@ -197,7 +209,6 @@
 	</ul>
 	<hr>
 </div>
-
 
 {if $LIT_KategorieListe|count > 0}
 	{foreach from=$LIT_KategorieListe item=KategorieName}
