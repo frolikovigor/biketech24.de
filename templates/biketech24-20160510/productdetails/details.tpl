@@ -36,10 +36,6 @@
     {/if}
 {/nocache}
 
-<div id="vorteilebeiuns" class="visible-lg-*">
-	<img src="http://biketech24.de/mediafiles/Sonstiges/vorteile.jpg" alt="Vorteile bei uns">
-</div>
-
 <div class="h1 visible-xs text-center">
 	{$Artikel->cName}
 </div>
@@ -56,8 +52,8 @@
 
         {* Add u-charged *}
         <meta itemprop="name" content="{$Artikel->cName}">
-
-        <div class="product-gallery {if $hasLeftBox}col-sm-7{else}col-sm-7{/if}">
+		
+        <div class="product-gallery {if $hasLeftBox}col-sm-8{else}col-sm-8{/if}">
 			{if $lit_magic360_images_large|count > 0}
 				<a class="Magic360" id="spin" href="{$lit_magic360_startimage_large}" data-options="{$lit_magic360_data_options}"><img src="{$lit_magic360_startimage_small}" alt=""/></a>
 				<script type="text/javascript">
@@ -67,7 +63,11 @@
 				{include file="productdetails/image.tpl"}
 			{/if}
         </div>
-        <div class="product-info {if $hasLeftBox}col-sm-5{else}col-sm-5{/if}">
+
+        <div class="product-info {if $hasLeftBox}col-sm-4{else}col-sm-4{/if}">
+			
+			{include file="productdetails/price_test.tpl" Artikel=$Artikel price_image=$priceImage tplscope="detail"}
+			
 			{block name="productdetails-info"}
             {if $Einstellungen.artikeldetails.artikeldetails_hersteller_anzeigen !== 'N' && isset($Artikel->cHersteller)}
                 {block name="product-info-manufacturer"}
@@ -89,7 +89,7 @@
 					{block name="productdetails-info-essential"}
                     {if isset($Artikel->cArtNr) || isset($Artikel->dMHD)}
                         <div class="col-xs-8">
-                            <p class="text-muted product-sku">{lang key="sortProductno" section="global"}: <span itemprop="sku">{$Artikel->cArtNr}</span></p>
+                            <span class="text-muted product-sku">{lang key="sortProductno" section="global"}: <span itemprop="sku">{$Artikel->cArtNr}</span></span>
                             {if isset($Artikel->dMHD) && isset($Artikel->dMHD_de)}
                                 <p title="{lang key='productMHDTool' section='global'}" class="best-before text-muted">{lang key="productMHD" section="global"}: <span itemprop="best-before">{$Artikel->dMHD_de}</span></p>
                             {/if}
@@ -110,6 +110,8 @@
                 <div class="clearfix top10"></div>
             {/if}
 
+			{include file="productdetails/stock.tpl"}
+			
             {if $Einstellungen.artikeldetails.artikeldetails_kategorie_anzeigen === 'Y'}
 				{block name="productdetails-info-category"}
                 <p class="product-category">
@@ -122,17 +124,6 @@
             
 			{/block}
 			
-			{if $oPlugin_lit_rahmenberechner}
-				{if $LIT_KategorieListe|count > 0}
-					{foreach from=$LIT_KategorieListe item=KategorieName}
-						{if $KategorieName->cName|regex_replace:"/[^a-zA-Z0-1]/":"" == "Fahrrder"}
-							<a href="/{$oPlugin_lit_rahmenberechner->oPluginFrontendLink_arr[0]->oPluginFrontendLinkSprache_arr[0]->cSeo}?exclusive_content=1" rel="nofollow" class="popup btn btn-default">
-								<span class="fa fa-retweet" aria-hidden="true"></span> {$lit_rahmenberechner_rahmengroesse_berechnen}
-							</a>
-						{/if}
-					{/foreach}
-				{/if}
-			{/if}
 			
             <div class="product-offer" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
 				{block name="productdetails-info-hidden"}
@@ -154,23 +145,23 @@
 				{/block}
                 <input type="hidden" name="kSprache" value="{$smarty.session.kSprache}" />
                 <!-- VARIATIONEN -->
-                {include file="productdetails/variation.tpl" simple=$Artikel->isSimpleVariation showMatrix=$showMatrix}
-                <hr>
-				{if isset($Artikel->Preise->strPreisGrafik_Detail)}
-					{assign var=priceImage value=$Artikel->Preise->strPreisGrafik_Detail}
-				{else}
-					{assign var=priceImage value=null}
-				{/if}
-			    {include file="productdetails/price.tpl" Artikel=$Artikel price_image=$priceImage tplscope="detail"}
-                {include file="productdetails/stock.tpl"}
-                <!-- WARENKORB anzeigen wenn keine variationen mehr auf lager sind?!-->
-                {include file="productdetails/basket.tpl"}
-                <hr>
+					
+				<div class="panel panel-basket">				
+				
+					{include file="productdetails/variation.tpl" simple=$Artikel->isSimpleVariation showMatrix=$showMatrix}
+					
+					{include file="productdetails/staffelpreise.tpl"}
+					
+					{include file="productdetails/basket.tpl"}
+					
+				</div>
             </div>
-
+			
 			{if !($Artikel->nIstVater && $Artikel->kVaterArtikel == 0)}
 				{include file="productdetails/actions.tpl"}
 			{/if}
+			
+			
         </div>{* /product-info *}
         {if $Artikel->bHasKonfig}
             <div id="product-configurator" class="product-actions top10">
@@ -182,9 +173,31 @@
                 {/if}
             </div>
         {/if}
+		
     </div>{* /row *}
 
 </form>
+
+<div class="center-block text-center">
+	<hr>
+	<ul class="list-inline">
+		{if $oPlugin_lit_rahmenberechner}
+			{if $LIT_KategorieListe|count > 0}
+				{foreach from=$LIT_KategorieListe item=KategorieName}
+					{if $KategorieName->cName|regex_replace:"/[^a-zA-Z0-1]/":"" == "Fahrrder"}
+						<li><img src="/mediafiles/Bilder/logos/vorteile_rahmenberechner.png" alt="Rahmenhoehe berechnen">&nbsp;<a href="/{$oPlugin_lit_rahmenberechner->oPluginFrontendLink_arr[0]->oPluginFrontendLinkSprache_arr[0]->cSeo}?exclusive_content=1" rel="nofollow" class="popup">{$lit_rahmenberechner_rahmengroesse_berechnen}</a></li>
+					{/if}
+				{/foreach}
+			{/if}
+		{/if}
+		<li><img src="/mediafiles/Bilder/logos/vorteile_hotline.png" alt="Hotline"><span data-toggle="tooltip" data-placement="bottom" title="Wir sind f&uuml;r Sie Mo. bis Fr. von 9:00 bis 17:00 Uhr telefonisch zu erreichen."> Hotline: <a href="tel:+4935217270300">03521 / 7270300</a></span></li>
+		<li><img src="/mediafiles/Bilder/logos/vorteile_rabatt.png" alt="Rabatt"> 2% Rabatt bei Zahlung per Vorkasse</li>
+		<li><img src="/mediafiles/Bilder/logos/vorteile_rueckgabe.png" alt="60 Tage Rückgabe"><span data-toggle="tooltip" data-placement="bottom" title="Sie k&ouml;nnen unbenutzte Artikel innerhalb von 60 Tagen an uns zur&uuml;cksenden."> 60 Tage R&uuml;ckgaberecht</span></li>
+		<li><img src="/mediafiles/Bilder/logos/vorteile_versand.png" alt="Versand"><span data-toggle="tooltip" data-placement="bottom" title="Wir schenken unseren Kunden die Versandkosten innerhalb Deutschlands ab 100 &euro; Warenwert. (ausgenommen Sperrgut)"> 0 &euro; Versand ab 100 &euro;</span></li>
+	</ul>
+	<hr>
+</div>
+
 
 {if $LIT_KategorieListe|count > 0}
 	{foreach from=$LIT_KategorieListe item=KategorieName}
