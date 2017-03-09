@@ -11,6 +11,72 @@
         {/if}
     {/if}
 
+    {* add u-charged *}
+    {assign var=amountItems value=0}
+
+    {foreach name=positionen from=$Bestellung->Positionen item=oPosition}{if $oPosition->kArtikel}{assign var=amountItems value=$amountItems+1}{/if}{/foreach}
+
+    {if $amountItems > 1}
+        <script type="text/javascript">
+            dataLayer.push({
+                'event': 'ecomm',
+                'ecommerce': {
+                    'purchase': {
+                        'actionField': {
+                            'id': '{$Bestellung -> cBestellNr}',
+                            'revenue': '{$Bestellung -> fWarensumme}',
+                            'currency':'EUR'
+                        },
+                        'products': [{foreach name=positionen from=$Bestellung->Positionen item=oPosition}
+                                {if $oPosition->kArtikel}{
+                                'name': '{$oPosition->cName}',
+                                'id': '{$oPosition->kArtikel}',
+                                'price': '{$oPosition->Artikel->Preise->fVKBrutto}',
+                                'category': '{getParentById id=$oPosition->kArtikel name='cName'}',
+                                'quantity': {$oPosition->nAnzahl}
+                            },{/if}
+                            {/foreach}]
+                    }
+                },
+                'ecomm_prodid': [{foreach name=positionen from=$Bestellung->Positionen item=oPosition}{if $oPosition->kArtikel}'{$oPosition->kArtikel}',{/if}{/foreach}],
+                'ecomm_pagetype': 'conversion',
+                'ecomm_category': [{foreach name=positionen from=$Bestellung->Positionen item=oPosition}{if $oPosition->kArtikel}'{$oPosition->Category}',{/if}{/foreach}],
+                'ecomm_totalvalue': [{foreach name=positionen from=$Bestellung->Positionen item=oPosition}{if $oPosition->kArtikel}'{$oPosition->Artikel->Preise->fVKBrutto}',{/if}{/foreach}]
+            });
+        </script>
+    {else}
+        <script type="text/javascript">
+            dataLayer.push({
+                'event': 'ecomm',
+                'ecommerce': {
+                    'purchase': {
+                        'actionField': {
+                            'id': '{$Bestellung -> cBestellNr}',
+                            'revenue': '{$Bestellung -> fWarensumme}',
+                            'currency':'EUR'
+                        },
+                        'products': [{foreach name=positionen from=$Bestellung->Positionen item=oPosition}
+                                {if $oPosition->kArtikel}{
+                                'name': '{$oPosition->cName}',
+                                'id': '{$oPosition->kArtikel}',
+                                'price': '{$oPosition->Artikel->Preise->fVKBrutto}',
+                                'category': '{getParentById id=$oPosition->kArtikel name='cName'}',
+                                'quantity': {$oPosition->nAnzahl}
+                            },{/if}
+                            {/foreach}]
+                    }
+                },
+                'ecomm_prodid': {foreach name=positionen from=$Bestellung->Positionen item=oPosition}{if $oPosition->kArtikel}'{$oPosition->kArtikel}'{/if}{/foreach},
+                'ecomm_pagetype': 'conversion',
+                'ecomm_category': {foreach name=positionen from=$Bestellung->Positionen item=oPosition}{if $oPosition->kArtikel}'{$oPosition->Category}'{/if}{/foreach},
+                'ecomm_totalvalue': {foreach name=positionen from=$Bestellung->Positionen item=oPosition}{if $oPosition->kArtikel}'{$oPosition->Artikel->Preise->fVKBrutto}'{/if}{/foreach}
+            });
+        </script>
+    {/if}
+    {* ==================== *}
+
+
+
     {if (empty($smarty.session.Zahlungsart->nWaehrendBestellung) || $smarty.session.Zahlungsart->nWaehrendBestellung != 1) && $Bestellung->Zahlungsart->cModulId|substr:0:10 !== 'za_billpay' && $Bestellung->Zahlungsart->cModulId !== 'za_kreditkarte_jtl' && $Bestellung->Zahlungsart->cModulId !== 'za_lastschrift_jtl'}
         <div class="pament-method-during-order">
             <p>{lang key='yourOrderId' section='checkout'}: <strong>{$Bestellung->cBestellNr}</strong></p>
