@@ -246,14 +246,6 @@
     <div class="recommendations">
         {block name="productdetails-recommendations"}
 
-            {* Add u-charged *}
-            {if isset($Xselling->Similars->Artikel) && count($Xselling->Similars->Artikel) > 0}
-                {lang key='customerWhoBoughtXBoughtAlsoY' section='productDetails' assign='slidertitle'}
-                {include file='snippets/product_slider.tpl' class='x-sell' id='slider-xsells' productlist=$Xselling->Similars->Artikel title='&Auml;hnliche Artikel'}
-            {/if}
-            {* -------------*}
-
-
 		{if isset($Xselling->Standard->XSellGruppen) && count($Xselling->Standard->XSellGruppen) > 0}
             {foreach name=Xsell_gruppen from=$Xselling->Standard->XSellGruppen item=Gruppe}
                 {include file='snippets/product_slider.tpl' class='x-supplies' id='slider-xsell-group-'|cat:$smarty.foreach.Xsell_gruppen.iteration productlist=$Gruppe->Artikel title=$Gruppe->Name}

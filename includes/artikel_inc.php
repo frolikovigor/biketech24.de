@@ -119,64 +119,6 @@ function gibArtikelXSelling($kArtikel)
                 }
             }
         }
-
-
-
-
-
-        // Add u-charged ==========
-        $amountSimilar = 4;
-        global $AktuelleKategorie;
-
-        $getCategoryOfArticle = isset($AktuelleKategorie->kKategorie) ? (int) $AktuelleKategorie->kKategorie : false;
-        if ($getCategoryOfArticle) {
-            $getListArticlesOfCat = Shop::DB()->query("SELECT * FROM tartikel JOIN tkategorieartikel ON tkategorieartikel.kArtikel = tartikel.kArtikel AND tartikel.cLagerKleinerNull = 'Y' AND tkategorieartikel.kKategorie = $getCategoryOfArticle", 2);
-
-            $similarCount = (is_array($getListArticlesOfCat)) ? count($getListArticlesOfCat) : 0;
-            if ($similarCount > 0) {
-                $xSelling->Similars = new stdClass();
-                $xSelling->Similars->getCategoryOfArticle = $AktuelleKategorie->cName;
-                $xSelling->Similars->Artikel = array();
-                $oArtikelOptionen = Artikel::getDefaultOptions();
-                $posArticle = 0;
-                $additionalArticle = array();
-
-                foreach ($getListArticlesOfCat as $index => $xs) {
-                    if ($kArtikel == $xs->kArtikel) {
-                        $posArticle++;
-                        continue;
-                    }
-
-                    if ((count($additionalArticle) < $amountSimilar) && ($posArticle === 0)) {
-                        $artikel = new Artikel();
-                        $artikel->fuelleArtikel($xs->kArtikel, $oArtikelOptionen);
-                        if ($artikel->aufLagerSichtbarkeit())
-                            $additionalArticle[] = $artikel;
-                    }
-
-                    if (($posArticle !== 0) && ($posArticle < ($amountSimilar + 1))) {
-                        $posArticle++;
-                        $artikel = new Artikel();
-                        $artikel->fuelleArtikel($xs->kArtikel, $oArtikelOptionen);
-                        if ($artikel->aufLagerSichtbarkeit()) {
-                            $xSelling->Similars->Artikel[] = $artikel;
-                        }
-                    };
-                }
-
-                if (count($xSelling->Similars->Artikel) < $amountSimilar) {
-                    $xSelling->Similars->Artikel = $xSelling->Similars->Artikel + $additionalArticle;
-                    $xSelling->Similars->Artikel = array_slice($xSelling->Similars->Artikel, 0, $amountSimilar);
-                }
-            }
-        }
-        //=========================
-
-
-
-
-
-
     }
     executeHook(HOOK_ARTIKEL_INC_XSELLING, array('kArtikel' => $kArtikel, 'xSelling' => &$xSelling));
 
